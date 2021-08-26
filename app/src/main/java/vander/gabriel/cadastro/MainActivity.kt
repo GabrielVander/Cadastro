@@ -35,16 +35,35 @@ class MainActivity : ComponentActivity() {
                         horizontalAlignment = Alignment.Start,
                     ) {
                         TextFieldWithLabel(label = "Full name")
+                        Spacer(modifier = Modifier.size(10.dp))
                         TextFieldWithLabel(
                             label = "Phone number",
                             placeholder = { Text("Ex.: 12-93456-7890") },
                         )
+                        Spacer(modifier = Modifier.size(10.dp))
                         TextFieldWithLabel(label = "Email")
+                        Spacer(modifier = Modifier.size(10.dp))
                         CheckboxWithLabel("Signup for newsletter", onChange = { })
+                        Spacer(modifier = Modifier.size(10.dp))
                         GenderField()
+                        Spacer(modifier = Modifier.size(10.dp))
                         TextFieldWithLabel(label = "City")
+                        Spacer(modifier = Modifier.size(10.dp))
                         Text("State")
+                        Spacer(modifier = Modifier.size(10.dp))
                         SateSelection()
+                        Spacer(modifier = Modifier.size(10.dp))
+                        Row(
+                            Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceEvenly
+                        ) {
+                            Button(onClick = { }) {
+                                Text("Clear")
+                            }
+                            Button(onClick = { }) {
+                                Text("Save")
+                            }
+                        }
                     }
                 }
             }
