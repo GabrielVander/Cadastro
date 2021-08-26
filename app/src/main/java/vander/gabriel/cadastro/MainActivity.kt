@@ -133,7 +133,15 @@ class MainActivity : ComponentActivity() {
                     Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceEvenly
                 ) {
-                    Button(onClick = { }) {
+                    Button(onClick = {
+                        fullName = ""
+                        phoneNumber = ""
+                        email = ""
+                        signedUpForNewsletter = false
+                        gender = ""
+                        city = ""
+                        state = ""
+                    }) {
                         Text("Clear")
                     }
                     Button(onClick = {
