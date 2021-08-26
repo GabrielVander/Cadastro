@@ -1,6 +1,7 @@
 package vander.gabriel.cadastro
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
@@ -8,11 +9,12 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import vander.gabriel.cadastro.ui.theme.CadastroTheme
@@ -21,51 +23,10 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContent {
             CadastroTheme {
-                Scaffold(topBar = {
-                    TopAppBar(
-                        title = { Text("Cadastro") },
-                    )
-                }) {
-                    Column(
-                        Modifier
-                            .padding(10.dp)
-                            .fillMaxWidth(),
-                        horizontalAlignment = Alignment.Start,
-                    ) {
-                        TextFieldWithLabel(label = "Full name")
-                        Spacer(modifier = Modifier.size(10.dp))
-                        TextFieldWithLabel(
-                            label = "Phone number",
-                            placeholder = { Text("Ex.: 12-93456-7890") },
-                        )
-                        Spacer(modifier = Modifier.size(10.dp))
-                        TextFieldWithLabel(label = "Email")
-                        Spacer(modifier = Modifier.size(10.dp))
-                        CheckboxWithLabel("Signup for newsletter", onChange = { })
-                        Spacer(modifier = Modifier.size(10.dp))
-                        GenderField()
-                        Spacer(modifier = Modifier.size(10.dp))
-                        TextFieldWithLabel(label = "City")
-                        Spacer(modifier = Modifier.size(10.dp))
-                        Text("State")
-                        Spacer(modifier = Modifier.size(10.dp))
-                        SateSelection()
-                        Spacer(modifier = Modifier.size(10.dp))
-                        Row(
-                            Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceEvenly
-                        ) {
-                            Button(onClick = { }) {
-                                Text("Clear")
-                            }
-                            Button(onClick = { }) {
-                                Text("Save")
-                            }
-                        }
-                    }
-                }
+                MyApp()
             }
         }
     }
@@ -99,7 +60,107 @@ class MainActivity : ComponentActivity() {
     }
 
     @Composable
-    fun SateSelection() {
+    fun MyApp() {
+        var fullName by remember { mutableStateOf("") }
+        var phoneNumber by remember { mutableStateOf("") }
+        var email by remember { mutableStateOf("") }
+        var signedUpForNewsletter by remember { mutableStateOf(false) }
+        var gender by remember { mutableStateOf("") }
+        var city by remember { mutableStateOf("") }
+        var state by remember { mutableStateOf("") }
+
+        Scaffold(topBar = {
+            TopAppBar(
+                title = { Text("Cadastro") },
+            )
+        }) {
+            Column(
+                Modifier
+                    .padding(10.dp)
+                    .fillMaxWidth(),
+                horizontalAlignment = Alignment.Start,
+            ) {
+                TextFieldWithLabel(
+                    label = "Full name",
+                    value = fullName,
+                    onChange = {
+                        fullName = it
+                    },
+                )
+                Spacer(modifier = Modifier.size(10.dp))
+                TextFieldWithLabel(
+                    label = "Phone number",
+                    placeholder = { Text("Ex.: 12-93456-7890") },
+                    value = phoneNumber,
+                    onChange = {
+                        phoneNumber = it
+                    },
+                )
+                Spacer(modifier = Modifier.size(10.dp))
+                TextFieldWithLabel(
+                    label = "Email",
+                    value = email,
+                    onChange = {
+                        email = it
+                    },
+                )
+                Spacer(modifier = Modifier.size(10.dp))
+                CheckboxWithLabel(
+                    label = "Signup for newsletter",
+                    checked = signedUpForNewsletter,
+                    onChange = {
+                        signedUpForNewsletter = it
+                    },
+                )
+                Spacer(modifier = Modifier.size(10.dp))
+                GenderField(value = gender, onGenderSelected = { gender = it })
+                Spacer(modifier = Modifier.size(10.dp))
+                TextFieldWithLabel(
+                    label = "City",
+                    value = city,
+                    onChange = {
+                        city = it
+                    },
+                )
+                Spacer(modifier = Modifier.size(10.dp))
+                Text("State")
+                SateSelection(
+                    value = state,
+                    onValueSelected = { state = it },
+                )
+                Spacer(modifier = Modifier.size(10.dp))
+                Row(
+                    Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceEvenly
+                ) {
+                    Button(onClick = { }) {
+                        Text("Clear")
+                    }
+                    Button(onClick = {
+                        val form = Form(
+                            fullName = fullName,
+                            phoneNumber = phoneNumber,
+                            email = email,
+                            signedUpForNewsletter = signedUpForNewsletter,
+                            gender = gender,
+                            city = city,
+                            state = state
+                        )
+                        Toast.makeText(
+                            applicationContext,
+                            form.toString(),
+                            Toast.LENGTH_LONG
+                        ).show()
+                    }) {
+                        Text("Save")
+                    }
+                }
+            }
+        }
+    }
+
+    @Composable
+    fun SateSelection(value: String, onValueSelected: (String) -> Unit) {
         val stateList = listOf(
             "Acre",
             "Alagoas",
@@ -129,26 +190,30 @@ class MainActivity : ComponentActivity() {
             "Sergipe",
             "Tocantins"
         )
-        val text = remember { mutableStateOf("") }
         val isOpen = remember { mutableStateOf(false) }
         val openCloseOfDropDownList: (Boolean) -> Unit = {
             isOpen.value = it
         }
-        val userSelectedString: (String) -> Unit = {
-            text.value = it
-        }
+
         Box {
             Column {
                 OutlinedTextField(
-                    value = text.value,
-                    onValueChange = { text.value = it },
+                    value = value,
+                    onValueChange = { },
+                    trailingIcon = {
+                        Icon(
+                            Icons.Filled.ArrowDropDown,
+                            contentDescription = "contentDescription",
+                            Modifier.rotate(if (isOpen.value) 180f else 0f)
+                        )
+                    },
                     modifier = Modifier.fillMaxWidth()
                 )
                 DropDownList(
                     open = isOpen.value,
                     list = stateList,
                     openCloseOfDropDownList,
-                    userSelectedString
+                    onValueSelected
                 )
             }
             Spacer(
@@ -164,25 +229,32 @@ class MainActivity : ComponentActivity() {
     }
 
     @Composable
-    private fun GenderField() {
+    private fun GenderField(value: String, onGenderSelected: (String) -> Unit) {
         Text("Gender")
         Row(
             Modifier
                 .selectableGroup()
                 .fillMaxWidth(),
         ) {
-            RadioButtonWithLabel("Male", onClick = { })
-            RadioButtonWithLabel("Female", onClick = { })
+            RadioButtonWithLabel(
+                label = "Male",
+                value = value,
+                onClick = { onGenderSelected("Male") },
+            )
+            RadioButtonWithLabel(label = "Female", onClick = { onGenderSelected("Female") })
         }
     }
 
     @Composable
     private fun RadioButtonWithLabel(
         label: String,
-        selected: Boolean = false,
+        value: String = "",
         onClick: () -> Unit
     ) {
-        RadioButton(selected = selected, onClick = onClick)
+        RadioButton(
+            selected = label == value,
+            onClick = onClick,
+        )
         Text(label)
     }
 
@@ -205,13 +277,13 @@ class MainActivity : ComponentActivity() {
     private fun TextFieldWithLabel(
         label: String = "",
         onChange: (String) -> Unit = { },
-        defaultValue: String = "",
+        value: String = "",
         placeholder: @Composable (() -> Unit)? = null
     ) {
         Text(label)
         OutlinedTextField(
             modifier = Modifier.fillMaxWidth(),
-            value = defaultValue,
+            value = value,
             onValueChange = onChange,
             placeholder = placeholder
         )
