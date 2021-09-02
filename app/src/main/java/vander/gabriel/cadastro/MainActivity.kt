@@ -16,7 +16,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import com.google.android.gms.instantapps.InstantApps
+import com.google.android.gms.instantapps.PackageManagerCompat
 import vander.gabriel.cadastro.ui.theme.CadastroTheme
 
 class MainActivity : ComponentActivity() {
@@ -161,6 +164,23 @@ class MainActivity : ComponentActivity() {
                         ).show()
                     }) {
                         Text("Save")
+                    }
+                }
+                if (InstantApps.getPackageManagerCompat(LocalContext.current).isInstantApp) {
+                    Spacer(modifier = Modifier.size(10.dp))
+                    Row(
+                            Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.Center
+                    ) {
+                        Button(onClick = {
+                            Toast.makeText(
+                                    applicationContext,
+                                    "We're on an Instant App!",
+                                    Toast.LENGTH_LONG
+                            ).show()
+                        }) {
+                            Text("Yay! Instant App!")
+                        }
                     }
                 }
             }
